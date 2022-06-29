@@ -1,0 +1,4 @@
+pygame==2.1.2
+numpy==1.21.6
+opencv-python==4.6.0.66
+torch==1.12.0
