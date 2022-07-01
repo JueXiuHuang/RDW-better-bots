@@ -18,7 +18,8 @@ class Board():
   dice_lvl = [1, 1, 1, 1, 1, 1]
   dice_lvl_cost = [150, 300, 500, 800, 1200]
   SP_list = [160, 200, 280, 400, 560, 760]
-  SP_level_wave = [4, 8, 14, 22, 30]
+  SP_level_wave = [3, 7, 12, 18, 23]
+  Arcade_level_wave = [4, 8, 14, 22, 30]
 
   @staticmethod
   def get_board_info():
