@@ -25,17 +25,13 @@ class Game():
     self.board = Board()
     self.init_all()
     self.tick = 0
-    self.tick_sec_ratio = 10
-    self.tick_wave_ratio = 1#13
+    self.tick_wave_ratio = 13
     self.update_ui()
 
   def reset(self):
     self.tick = 0
     Board.reset_game()
   
-  def game_ended(self):
-    return Board.wave > 30
-
   def play_step(self, action):
     # action should be an int which maps to the
     #   value of Action class im myEnum.py
@@ -54,7 +50,8 @@ class Game():
 
     reward = 0
     game_over = False
-
+    skill_reward = Board.check_skill()
+    reward += skill_reward
     # Step 2, execute action from Agent
     if action == Action.Pass.value:
       # Agent choose to do nothing
@@ -82,6 +79,9 @@ class Game():
       loc_a = int(loc_a)
       loc_b = int(loc_b)
       success = Board.merge_dice(loc_a, loc_b)
+      if not success:
+        success = Board.merge_dice(loc_b, loc_a)
+      
       if success:
         reward += Reward.merge_success.value
       else:
@@ -102,25 +102,15 @@ class Game():
     # Step 5, return reward for this step
     return game_over, reward
 
-  def cal_score(self):
-    score = 0
-    a = 5
-    b = 2
-    c = 1
-    for dice in Board.dice_list:
-      dt = dice.dice_type
-      score += a*pow(dice.dice_star, 2) + b*Board.dice_lvl[dt] + c
-    return score  - 45
-
   def cal_reward(self):
     score = 0
     a = 5
-    b = 2
+    b = 0.2
     c = 1
     for dice in Board.dice_list:
       dt = dice.dice_type
-      score += a*pow(dice.dice_star, 2) + b*Board.dice_lvl[dt] + c
-    return score  - 45
+      score += a*pow(dice.dice_star, 3) + b*Board.dice_lvl[dt]
+    return score
   
   def update_ui(self):
     self.surface.fill(pyg.Color("black"))

@@ -15,12 +15,21 @@ class Board():
   summon_cost = 5
   wave = 0
 
-  dice_lvl = [1, 1, 1, 1, 1, 1]
-  dice_lvl_cost = [150, 300, 500, 800, 1200]
+  dice_lvl = [0, 1, 1, 1, 1, 1]
+  dice_lvl_cost = [150, 300, 500, 800, 1200, float('inf')]
   SP_list = [160, 200, 280, 400, 560, 760]
   SP_level_wave = [3, 7, 12, 18, 23]
   Arcade_level_wave = [4, 8, 14, 22, 30]
 
+  @staticmethod
+  def reset_game():
+    Board.dice_list = []
+    Board.init_board()
+    Board.SP = 50
+    Board.summon_cost = 5
+    Board.wave = 0
+    Board.dice_lvl = [0, 1, 1, 1, 1, 1]
+  
   @staticmethod
   def get_board_info():
     return
@@ -76,16 +85,6 @@ class Board():
     return True
 
   @staticmethod
-  def reset_game():
-    for dice in Board.dice_list:
-      dice.dice_type = DiceType.Blank.value
-      dice.dice_star = 0
-    Board.SP = 50
-    Board.summon_cost = 5
-    Board.wave = 0
-    Board.dice_lvl = [1, 1, 1, 1, 1, 1]
-
-  @staticmethod
   def lvlup_dice(dice_type):
     if Board.dice_lvl[dice_type] > 5:
       # print('Already max lvl...')
@@ -138,12 +137,15 @@ class Board():
   
   @staticmethod
   def check_skill():
+    skill_reward = 0
     for idx in range(len(Board.dice_list)):
       can_activate = Board.dice_list[idx].check_skill_tick()
       if can_activate:
-        new_dice = Board.dice_list[idx].skill(Board.generate_random_dice)
+        new_dice, reward = Board.dice_list[idx].skill(Board.generate_random_dice)
         if new_dice:
           Board.dice_list[idx] = new_dice
+        skill_reward += reward
+    return skill_reward
 
   @staticmethod
   def merge_dice(loc_a, loc_b):

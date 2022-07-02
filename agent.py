@@ -11,10 +11,10 @@ from utils import *
 class Agent():
   def __init__(self, max_memory=10000, lr=3e-4):
     self.n_game = 0
-    self.target_update = 10
+    self.target_update = 15
     self.steps_times = 0
     self.batch_size = 32
-    self.exploration_stage = 5000
+    self.exploration_stage = 50000
     self.replay_memory = deque(maxlen=max_memory) # will automatically popleft when reach max_memory
     self.model = BetterBot()
     self.trainer = Trainer(self.model, lr)
@@ -65,14 +65,20 @@ class Agent():
 
   def get_action(self):
     # pass state into model, and return an action id
+    self.steps_times += 1
     threshold = max(1 - self.steps_times / self.exploration_stage, 0.1)
     from_random = threshold > np.random.random_sample()
     if from_random:
       action = np.random.randint(0, len(Action))
     else:
       state = self.get_state()
-      prediction = self.model(state)
-      action = torch.argmax(prediction).item()
+      dt = torch.tensor([state['dice_type']], dtype=torch.long)
+      ds = torch.tensor([state['dice_star']], dtype=torch.long)
+      db = torch.tensor([state['summon_lvl']], dtype=torch.long)
+      
+      with torch.no_grad():
+        prediction = self.model(dt, ds, db)
+        action = torch.argmax(prediction).item()
 
     return action
 
@@ -90,7 +96,10 @@ def train():
     while True:
       state = agent.get_state()
       action = agent.get_action()
+      reward_baseline = game.cal_reward()
+
       game_over, reward = game.play_step(action)
+      reward -= reward_baseline
       next_state = agent.get_state()
 
       agent.remember(state, action, reward, next_state, game_over)
@@ -98,7 +107,7 @@ def train():
       agent.update_model()
 
       if game_over:
-        scores.append(game.cal_score())
+        scores.append(game.cal_reward())
         plot(scores)
         break
     

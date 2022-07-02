@@ -11,7 +11,7 @@ class BetterBot(nn.Module):
     super(BetterBot, self).__init__()
     self.act_size = act_size
     self.emb_dim = 128
-    self.hid_dim = 768
+    self.hid_dim = 256
     self.emb_dice = nn.Embedding(15, self.emb_dim)
     self.emb_star = nn.Embedding(15, self.emb_dim)
     self.emb_btns = nn.Embedding(2, self.emb_dim)
@@ -28,7 +28,12 @@ class BetterBot(nn.Module):
 
     x = torch.cat((dt, ds, db), dim=1) # (bz, 36, emb_dim)
     x = self.linear1(x) # (bz, 36, hid_dim)
+    x = F.relu(x)
+    x = self.linear2(x) # (bz, 36, hid_dim)
+    x = F.relu(x)
     x = torch.mean(x, dim=1) # (bz, hid_dim)
+    x = self.linear3(x)
+    x = F.relu(x)
     x = self.output(x) # (bz, act_size)
     return x
 
@@ -45,6 +50,7 @@ class Trainer():
     self.loss_fn = nn.SmoothL1Loss()
 
   def optimize_model(self, states, actions, rewards, next_states, end_games):
+    self.model.train()
     actions = torch.tensor(actions, dtype=torch.long).unsqueeze(1)
     end_games = torch.tensor(end_games, dtype=torch.bool)
     rewards = torch.tensor(rewards, dtype=torch.float)
@@ -71,8 +77,6 @@ class Trainer():
 
     self.optimizer.zero_grad()
     loss.backward()
-    # for param in self.model.parameters():
-    #     param.grad.data.clamp_(-1, 1)
     self.optimizer.step()
 
     return

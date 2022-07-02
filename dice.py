@@ -24,7 +24,7 @@ class Dice():
     self.rect = pyg.Rect(posx, posy, width, height)
 
     # 10 tick equals to 1 second
-    self.skill_tick = 10
+    self.skill_tick = 50
     self.skill_count_down = self.skill_tick
     
     self.set_content(image)
@@ -76,7 +76,8 @@ class Dice():
       return False
   
   def skill(self, func):
-    return
+    reward = 0
+    return None, reward
 
   def copy_info(self, dice, need_cp_star=True):
     dice.original_x = self.original_x
@@ -165,17 +166,19 @@ class JokerDice(Dice):
 class GrowthDice(Dice):
   def __init__(self, image, dice_type, posx, posy, width, height, draggable):
     super().__init__(image, dice_type, posx, posy, width, height, draggable)
-    self.skill_tick = 5000#200
+    self.skill_tick = 20
     self.skill_count_down = self.skill_tick
 
   def skill(self, func):
     if self.dice_star > 6:
-      return self
+      reward = 0
+      return self, reward
+    reward = Reward.growth_success.value
     new_dice = func()
     new_dice = self.copy_info(new_dice, need_cp_star=True)
     new_dice.dice_star += 1
 
-    return new_dice
+    return new_dice, reward
 
 class SacrificeDice(Dice):
   def __init__(self, image, dice_type, posx, posy, width, height, draggable):

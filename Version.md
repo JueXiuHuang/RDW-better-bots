@@ -1,3 +1,8 @@
+# Version 1.1.0
+1. fix merge bugs
+2. add reward baseline
+3. change reset game method in Board
+
 # Version 1.0.0
 1. finish Agent
 2. finish Trainer

@@ -10,9 +10,10 @@ class DiceType(Enum):
   Sacrifice = 6
 
 class Reward(Enum):
-  merge_success = 5
-  summon_success = 5
-  upg_success = 5
+  merge_success = 25
+  summon_success = 25
+  growth_success = 25
+  upg_success = 1
   merge_fail = -5
   summon_fail = -5
   upg_fail = -5
