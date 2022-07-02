@@ -26,7 +26,7 @@ class Game():
     self.init_all()
     self.tick = 0
     self.tick_sec_ratio = 10
-    self.tick_wave_ratio = 13
+    self.tick_wave_ratio = 1#13
     self.update_ui()
 
   def reset(self):
@@ -56,7 +56,6 @@ class Game():
     game_over = False
 
     # Step 2, execute action from Agent
-    print(Action(action).name)
     if action == Action.Pass.value:
       # Agent choose to do nothing
       reward = 0
@@ -103,8 +102,25 @@ class Game():
     # Step 5, return reward for this step
     return game_over, reward
 
+  def cal_score(self):
+    score = 0
+    a = 5
+    b = 2
+    c = 1
+    for dice in Board.dice_list:
+      dt = dice.dice_type
+      score += a*pow(dice.dice_star, 2) + b*Board.dice_lvl[dt] + c
+    return score  - 45
+
   def cal_reward(self):
-    return 0
+    score = 0
+    a = 5
+    b = 2
+    c = 1
+    for dice in Board.dice_list:
+      dt = dice.dice_type
+      score += a*pow(dice.dice_star, 2) + b*Board.dice_lvl[dt] + c
+    return score  - 45
   
   def update_ui(self):
     self.surface.fill(pyg.Color("black"))

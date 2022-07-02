@@ -1,3 +1,9 @@
+# Version 1.0.0
+1. finish Agent
+2. finish Trainer
+3. finish cal_score and cal_reward method
+4. add plot method
+
 # Version 0.0.3
 1. finish Agent skeleton
 

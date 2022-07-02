@@ -55,11 +55,11 @@ class Board():
   def summon_dice():
     # no slot for summon new dice
     if np.sum([dice.dice_type == DiceType.Blank.value for dice in Board.dice_list]) == 0:
-      print('No more space')
+      # print('No more space')
       return False
     
     if Board.SP < Board.summon_cost:
-      print('Not enough SP')
+      # print('Not enough SP')
       return False
     
     Board.SP -= Board.summon_cost
@@ -88,13 +88,13 @@ class Board():
   @staticmethod
   def lvlup_dice(dice_type):
     if Board.dice_lvl[dice_type] > 5:
-      print('Already max lvl...')
+      # print('Already max lvl...')
       return False
     lvl = Board.dice_lvl[dice_type] - 1
     if Board.dice_lvl_cost[lvl] > Board.SP:
-      print('Not enough SP...')
+      # print('Not enough SP...')
       return False
-    print('Lvl up dice...')
+    # print('Lvl up dice...')
     Board.SP -= Board.dice_lvl_cost[lvl]
     Board.dice_lvl[dice_type] += 1
     return True

@@ -63,7 +63,7 @@ class SummonBtn(Button):
     self.cost = str(Board.summon_cost)
   
   def click(self):
-    print('Summon new dice...')
+    # print('Summon new dice...')
     Board.summon_dice()
 
   def update(self):
@@ -82,7 +82,7 @@ class ResetBtn(Button):
     super().__init__(image, x, y, width, height, pyg.Color(0, 230, 77))
   
   def click(self):
-    print('Reset the game...')
+    # print('Reset the game...')
     Board.reset_game()
 
 class LvlUpBtn(Button):
