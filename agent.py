@@ -14,7 +14,7 @@ class Agent():
     self.target_update = 15
     self.steps_times = 0
     self.batch_size = 32
-    self.exploration_stage = 50000
+    self.exploration_stage = 50000000
     self.replay_memory = deque(maxlen=max_memory) # will automatically popleft when reach max_memory
     self.model = BetterBot()
     self.trainer = Trainer(self.model, lr)
@@ -23,10 +23,12 @@ class Agent():
     dice_lvl = Board.dice_lvl[1:]
     dice_type = []
     dice_star = []
-    can_summon_lvl = [int(Board.SP > Board.summon_cost)] # can_summon, can_upg1, can_upg2 ...
+    can_summon_check_a = Board.SP > Board.summon_cost
+    can_summon_check_b = np.sum([dice.dice_type == DiceType.Blank.value for dice in Board.dice_list]) > 0
+    can_summon_lvl = [int(can_summon_check_a and can_summon_check_b)] # can_summon, can_upg1, can_upg2 ...
 
-    for lvl in dice_lvl:
-      can_summon_lvl.append(int(Board.SP > Board.dice_lvl_cost[lvl-1]))
+    # for lvl in dice_lvl:
+    #   can_summon_lvl.append(int(Board.SP > Board.dice_lvl_cost[lvl-1]))
     
     for dice in Board.dice_list:
       dice_type.append(dice.dice_type)

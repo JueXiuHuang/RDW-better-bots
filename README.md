@@ -14,4 +14,8 @@ Environment: [RDW-emulator](https://github.com/JueXiuHuang/RDW-emulator.git)
 
 5. [图解PyTorch中的torch.gather函数](https://zhuanlan.zhihu.com/p/352877584)
 
-6. [李宏毅_ATDL_DRL Lecture 4](https://hackmd.io/@shaoeChen/Bywb8YLKS/https%3A%2F%2Fhackmd.io%2F%40shaoeChen%2FHyyXreFcB#%E6%9D%8E%E5%AE%8F%E6%AF%85_ATDL_DRL-Lecture-4)
+6. [李宏毅_ATDL_DRL Lecture 4](https://hackmd.io/@shaoeChen/Bywb8YLKS)
+
+7. [Prioritized Experience Replay](https://mofanpy.com/tutorials/machine-learning/reinforcement-learning/prioritized-replay/)
+
+8. [Prioritized Experience Replay](https://arxiv.org/abs/1511.05952?context=cs)

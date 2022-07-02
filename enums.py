@@ -10,22 +10,23 @@ class DiceType(Enum):
   Sacrifice = 6
 
 class Reward(Enum):
-  merge_success = 25
-  summon_success = 25
-  growth_success = 25
+  merge_success = 100
+  summon_success = 50
+  growth_success = 150
   upg_success = 1
-  merge_fail = -5
-  summon_fail = -5
+  merge_fail = -10
+  summon_fail = -50
   upg_fail = -5
+  pass_ = -50
 
 class Action(Enum):
   Pass = 0
   Summon = auto()
-  Upg_1 = auto()
-  Upg_2 = auto()
-  Upg_3 = auto()
-  Upg_4 = auto()
-  Upg_5 = auto()
+  # Upg_1 = auto()
+  # Upg_2 = auto()
+  # Upg_3 = auto()
+  # Upg_4 = auto()
+  # Upg_5 = auto()
   Merge_0_1 = auto()
   Merge_0_2 = auto()
   Merge_0_3 = auto()

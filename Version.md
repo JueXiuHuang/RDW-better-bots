@@ -1,3 +1,8 @@
+# Version 1.2.0
+1. update reference url
+2. lock upg action (agent cannot upgrade dice lvl now)
+3. fix some bugs
+
 # Version 1.1.0
 1. fix merge bugs
 2. add reward baseline

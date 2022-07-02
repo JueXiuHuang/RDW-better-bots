@@ -38,6 +38,7 @@ class Game():
 
     self.tick += 1
     if self.tick % self.tick_wave_ratio == 0:
+      print('='*15)
       Board.wave += 1
       idx = np.sum([Board.wave >= wave for wave in Board.SP_level_wave])
       Board.SP += Board.SP_list[idx]
@@ -53,9 +54,11 @@ class Game():
     skill_reward = Board.check_skill()
     reward += skill_reward
     # Step 2, execute action from Agent
+    print(Action(action).name)
     if action == Action.Pass.value:
       # Agent choose to do nothing
-      reward = 0
+      reward += Reward.pass_.value
+      success = True
     elif action == Action.Summon.value:
       # Agent choose to summon a new dice
       success = Board.summon_dice()
@@ -63,15 +66,15 @@ class Game():
         reward += Reward.summon_success.value
       else:
         reward += Reward.summon_fail.value
-    elif action in range(Action.Upg_1.value, Action.Upg_5.value+1):
-      # Agent choose to upgrade dice
-      dice_type = Action(action).name
-      dice_type = int(dice_type.split('_')[1])
-      success = Board.lvlup_dice(dice_type)
-      if success:
-        reward += Reward.upg_success.value
-      else:
-        reward += Reward.upg_fail.value
+    # elif action in range(Action.Upg_1.value, Action.Upg_5.value+1):
+    #   # Agent choose to upgrade dice
+    #   dice_type = Action(action).name
+    #   dice_type = int(dice_type.split('_')[1])
+    #   success = Board.lvlup_dice(dice_type)
+    #   if success:
+    #     reward += Reward.upg_success.value
+    #   else:
+    #     reward += Reward.upg_fail.value
     elif action in range(Action.Merge_0_1.value, Action.Merge_13_14.value+1):
       # Agent choose to merge dice
       action_str = Action(action).name
@@ -86,7 +89,7 @@ class Game():
         reward += Reward.merge_success.value
       else:
         reward += Reward.merge_fail.value
-
+    print('Success:', success)
     # Step 3, check if game over
     
     if Board.wave > 30:
@@ -110,6 +113,7 @@ class Game():
     for dice in Board.dice_list:
       dt = dice.dice_type
       score += a*pow(dice.dice_star, 3) + b*Board.dice_lvl[dt]
+
     return score
   
   def update_ui(self):

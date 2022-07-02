@@ -6,34 +6,53 @@ import os
 
 from enums import *
 
+class attn_layer(nn.Module):
+  def __init__(self, dim=512):
+    super(attn_layer, self).__init__()
+    self.attn = nn.MultiheadAttention(dim, num_heads=2, dropout=0.2, batch_first=True)
+    self.linear = nn.Linear(dim, dim)
+
+  def forward(self, x):
+    x_ = self.attn(x, x, x, need_weights=False)[0]
+    x = x + x_
+    x_ = self.linear(x)
+    x_ = F.relu(x_)
+    x = x + x_
+    return x
+
 class BetterBot(nn.Module):
   def __init__(self, act_size=len(Action)):
     super(BetterBot, self).__init__()
     self.act_size = act_size
-    self.emb_dim = 128
-    self.hid_dim = 256
-    self.emb_dice = nn.Embedding(15, self.emb_dim)
-    self.emb_star = nn.Embedding(15, self.emb_dim)
-    self.emb_btns = nn.Embedding(2, self.emb_dim)
+    self.n_layers = 2
+    self.dim = 8
+    self.emb_dice = nn.Embedding(15, self.dim)
+    self.emb_star = nn.Embedding(15, self.dim)
+    self.emb_btns = nn.Embedding(2, self.dim)
 
-    self.linear1 = nn.Linear(self.emb_dim, self.hid_dim)
-    self.linear2 = nn.Linear(self.hid_dim, self.hid_dim)
-    self.linear3 = nn.Linear(self.hid_dim, self.hid_dim)
-    self.output = nn.Linear(self.hid_dim, act_size)
+    self.layers = [attn_layer(self.dim) for _ in range(self.n_layers)]
+    self.linear1 = nn.Linear(self.dim, self.dim)
+    self.linear2 = nn.Linear(self.dim, self.dim)
+    self.linear3 = nn.Linear(self.dim, self.dim)
+    self.output = nn.Linear(self.dim, act_size)
 
   def forward(self, dice_type, dice_star, summon_lvl):
     dt = self.emb_dice(dice_type) # (bz, 15, emb_dim)
     ds = self.emb_star(dice_star) # (bz, 15, emb_dim)
     db = self.emb_btns(summon_lvl) # (bz, 6, emb_dim)
-
     x = torch.cat((dt, ds, db), dim=1) # (bz, 36, emb_dim)
-    x = self.linear1(x) # (bz, 36, hid_dim)
-    x = F.relu(x)
-    x = self.linear2(x) # (bz, 36, hid_dim)
-    x = F.relu(x)
-    x = torch.mean(x, dim=1) # (bz, hid_dim)
-    x = self.linear3(x)
-    x = F.relu(x)
+
+    for layer in self.layers:
+      x = layer(x)
+    x = torch.mean(x, dim=1)
+
+    # x = self.linear1(x) # (bz, 36, hid_dim)
+    # x = F.relu(x)
+    # x = self.linear2(x) # (bz, 36, hid_dim)
+    # x = F.relu(x)
+    # x = torch.mean(x, dim=1) # (bz, hid_dim)
+    # x = self.linear3(x)
+    # x = F.relu(x)
     x = self.output(x) # (bz, act_size)
     return x
 
